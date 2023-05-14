@@ -17,7 +17,10 @@ mkdir -p /root/tm
 ip=$(curl -sS ip.sb)
 
 # Get region name based on IP address
-region=$(curl -sS "https://ipapi.co/$ip/region")
+region=$(curl -sS "https://ipapi.co/$ip/region/?lang=zh-cn")
+
+# Get CPU architecture
+cpu_arch=$(uname -m)
 
 # Create 'docker-compose.yml' file for tm
 cat <<EOF > /root/tm/docker-compose.yml
@@ -25,7 +28,7 @@ version: "3"
 services:
   tm:
     image: traffmonetizer/cli
-    command: start accept --token doGDCYUFVBFyxldQaoH3zTc2+0S2MdcRZ7IzRUO4x7w= --device-name aws-32v-2-$region
+    command: start accept --token doGDCYUFVBFyxldQaoH3zTc2+0S2MdcRZ7IzRUO4x7w= --device-name $region-$cpu_arch-$ip
     container_name: tm
     restart: always
 EOF
@@ -50,3 +53,4 @@ EOF
 
 # Run peer2pro container
 cd /root/peer2 && docker-compose up -d
+ 
