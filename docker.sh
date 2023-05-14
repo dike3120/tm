@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Check if Docker is already installed
+# 检查是否已安装 Docker
 if ! command -v docker >/dev/null 2>&1 ; then
-    # Install Docker
+    # 安装 Docker
     curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh
 fi
 
-# Check if Docker Compose is already installed
+# 检查是否已安装 Docker Compose
 if ! command -v docker-compose >/dev/null 2>&1 ; then
-    # Get CPU architecture
+    # 获取 CPU 架构
     cpu_arch=$(uname -m)
 
-    # Define Docker Compose release URL based on CPU architecture
+    # 根据 CPU 架构定义 Docker Compose 的发布 URL
     compose_url=""
     if [ "$cpu_arch" == "x86_64" ]; then
         compose_url="https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-x86_64"
@@ -19,29 +19,29 @@ if ! command -v docker-compose >/dev/null 2>&1 ; then
         compose_url="https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-arm64"
     fi
 
-    # Install Docker Compose
+    # 安装 Docker Compose
     if [ -n "$compose_url" ]; then
         sudo curl -L "$compose_url" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
     else
-        echo "Unsupported CPU architecture: $cpu_arch"
+        echo "不支持的 CPU 架构: $cpu_arch"
         exit 1
     fi
 fi
 
-# Create directory 'tm' if it doesn't exist
+# 如果目录 'tm' 不存在，则创建
 mkdir -p /root/tm
 
-# Get public IP address
+# 获取公网 IP 地址
 ip=$(curl -sS ip.sb)
 
-# Get region name based on IP address
+# 根据 IP 地址获取地区名称
 region=$(curl -sS "https://ipapi.co/$ip/region/?lang=zh-cn")
 
-# Get CPU architecture
+# 获取 CPU 架构
 cpu_arch=$(uname -m)
 
-# Create 'docker-compose.yml' file for tm
+# 为 tm 创建 'docker-compose.yml' 文件
 cat <<EOF > /root/tm/docker-compose.yml
 version: "3"
 services:
@@ -52,13 +52,13 @@ services:
     restart: always
 EOF
 
-# Run tm container
+# 启动 tm 容器
 cd /root/tm && docker-compose up -d
 
-# Create directory 'peer2' if it doesn't exist
+# 如果目录 'peer2' 不存在，则创建
 mkdir -p /root/peer2
 
-# Create 'docker-compose.yml' file for peer2pro
+# 为 peer2pro 创建 'docker-compose.yml' 文件
 cat <<EOF > /root/peer2/docker-compose.yml
 version: '3'
 services:
@@ -70,5 +70,5 @@ services:
     container_name: peer2pro
 EOF
 
-# Run peer2pro container
+# 启动 peer2pro 容器
 cd /root/peer2 && docker-compose up -d
