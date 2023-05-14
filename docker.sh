@@ -1,13 +1,32 @@
 #!/bin/bash
 
-# Check if Docker and Docker Compose are already installed
-if ! command -v docker >/dev/null 2>&1 || ! command -v docker-compose >/dev/null 2>&1 ; then
-  # Install Docker
-  curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh
+# Check if Docker is already installed
+if ! command -v docker >/dev/null 2>&1 ; then
+    # Install Docker
+    curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh
+fi
 
-  # Install Docker Compose
-  sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-  sudo chmod +x /usr/local/bin/docker-compose
+# Check if Docker Compose is already installed
+if ! command -v docker-compose >/dev/null 2>&1 ; then
+    # Get CPU architecture
+    cpu_arch=$(uname -m)
+
+    # Define Docker Compose release URL based on CPU architecture
+    compose_url=""
+    if [ "$cpu_arch" == "x86_64" ]; then
+        compose_url="https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-x86_64"
+    elif [ "$cpu_arch" == "aarch64" ]; then
+        compose_url="https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-arm64"
+    fi
+
+    # Install Docker Compose
+    if [ -n "$compose_url" ]; then
+        sudo curl -L "$compose_url" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+    else
+        echo "Unsupported CPU architecture: $cpu_arch"
+        exit 1
+    fi
 fi
 
 # Create directory 'tm' if it doesn't exist
@@ -53,4 +72,3 @@ EOF
 
 # Run peer2pro container
 cd /root/peer2 && docker-compose up -d
- 
