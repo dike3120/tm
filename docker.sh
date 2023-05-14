@@ -33,10 +33,10 @@ fi
 mkdir -p /root/tm
 
 # 获取公网 IP 地址
-ip=$(curl -sS ip.cn/s)
+ip=$(curl -sS ip.sb)
 
 # 根据 IP 地址获取地区名称
-region=$(curl -sS "https://ip.cn/index.php?ip=$ip&action=2" | grep -oP '(?<=来自：).*?(?=\s)')
+region=$(curl -sS "https://ipapi.co/$ip/region/?lang=zh-cn")
 
 # 获取 CPU 架构
 cpu_arch=$(uname -m)
