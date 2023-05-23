@@ -16,7 +16,8 @@ if ! command -v docker-compose >/dev/null 2>&1 ; then
     if [ "$cpu_arch" == "x86_64" ]; then
         compose_url="https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-x86_64"
     elif [ "$cpu_arch" == "aarch64" ]; then
-        compose_url="https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-arm64"
+        compose_url="https://github.com/docker/compose/releases/download/v2.17.1/docker-compose-linux-aarch64
+"
     fi
 
     # Install Docker Compose
